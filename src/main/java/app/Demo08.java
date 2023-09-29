@@ -15,28 +15,23 @@ public class Demo08 {
 	// Listado de los Usuarios segun un criterio (filtro)
 	
 	public static void main(String[] args) {
-		String usuario = JOptionPane.showInputDialog("Ingrese usuario: ");
-		String clave = JOptionPane.showInputDialog("Ingrese clave: ");
-		
 		EntityManagerFactory fabrica = 
 				Persistence.createEntityManagerFactory("jpa_sesion01");
 		EntityManager em = fabrica.createEntityManager();
 		
 		// select * from tb_usuarios --> Lista
 		int xtipo = 2;
-		String jpql = "select u from Usuario u where u.usr_usua = :xusr and u.cla_usua = :xcla";
-		try {
-			Usuario u = em.createQuery(jpql, Usuario.class).
-					setParameter("xusr", usuario).setParameter("xcla", clave).getSingleResult();
-			//mostrar el contenido del usuario
-			JOptionPane.showMessageDialog(null, "Bienvenido(a) " + u.getNom_usua());
-			//Abrir ventana principal
-			FrmManteProd v = new FrmManteProd();
-			v.setVisible(true);
-			//dispose();
-			
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Error: Usuario o clave incorrecto");
+		String jpql = "select u from Usuario u where u.idtipo = :xtipo";
+		List<Usuario> lstUsuarios = em.createQuery(jpql, Usuario.class).
+				setParameter("xtipo", xtipo).getResultList();
+		
+		// motrar el contenido del resultado
+		for (Usuario u : lstUsuarios) {
+			System.out.println("Codigo.....: " + u.getCod_usua());
+			System.out.println("Nombre.....: " + u.getNom_usua() + " " + u.getApe_usua());
+			System.out.println("Tipo.....: " + u.getIdtipo() + "-" + u.getObjTipo().getDescripcion());
+			System.out.println("-----------------------------");
+
 		}
 		
 		em.close();
